@@ -1,5 +1,6 @@
 import http from 'node:http';
 import fs from 'node:fs';
+import { URL } from 'node:url';
 
 const hostname = 'localhost';
 const port = 8080;
@@ -10,8 +11,18 @@ const pages = {
 };
 
 const server = http.createServer((req, res) => {
-  const fileName = req.url in pages ? pages[req.url] : '404.html';
-  const statusCode = req.url in pages ? 200 : 404;
+  const parsedURL = new URL(req.url, `http://${req.headers.host}`);
+  const pathname = parsedURL.pathname;
+
+  if (pathname !== '/' && pathname.endsWith('/')) {
+    const cleanPath = pathname.slice(0, -1);
+    res.writeHead(301, { Location: cleanPath });
+    res.end();
+    return;
+  }
+
+  const fileName = pathname in pages ? pages[pathname] : '404.html';
+  const statusCode = pathname in pages ? 200 : 404;
 
   fs.readFile(`./${fileName}`, (err, content) => {
     if (err) {
