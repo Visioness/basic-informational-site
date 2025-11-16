@@ -1,3 +1,34 @@
+const express = require('express');
+const path = require('path');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/about', (req, res) => {
+  res.sendFile(path.join(__dirname, 'about.html'));
+});
+
+app.get('/contact-me', (req, res) => {
+  res.sendFile(path.join(__dirname, 'contact-me.html'));
+});
+
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, '404.html'));
+});
+
+const PORT = 3000;
+
+app.listen(PORT, (error) => {
+  if (error) {
+    throw error;
+  }
+
+  console.log(`Server is running at http://localhost:${PORT}`);
+});
+
+/*
 import http from 'node:http';
 import fs from 'node:fs';
 import { URL } from 'node:url';
@@ -41,3 +72,4 @@ const server = http.createServer((req, res) => {
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}`);
 });
+*/
